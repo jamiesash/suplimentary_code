@@ -104,11 +104,6 @@ gc()
 ```
 
 ```{r}
-fsle = load_nc(path = "C:\\Users\\james\\Desktop\\jamieslife\\data\\infiles\\case_study\\fsle\\",
-               patt = "fsle_po_2018.nc")
-extent(fsle) = extent(fsle) - c(360, 360, 0 ,0)
-gc()
-
 sla = load_nc(path = "C:\\Users\\james\\Desktop\\jamieslife\\data\\infiles\\case_study\\sla\\",
               patt = "2010_2021_sla.nc",
               vars = c("latitude", "longitude", "sla", "time"))
@@ -117,8 +112,6 @@ gc()
 
 fix oreantation
 ```{r}
-fsle = oreant(fsle, flip = "y", t1 = TRUE)
-gc()
 sla  = oreant(sla, flip = "y", t1 = TRUE)
 gc()
 ```
@@ -126,7 +119,6 @@ gc()
 Crop all to the same extent
 ```{r crop}
 e = extent(ssta)
-fsle = raster::crop(fsle, e)
 sla  = raster::crop(sla,  e)
 gc()
 ```
@@ -150,7 +142,6 @@ chla = timesnip(chla,  sdate, edate)
 slaa = timesnip(slaa,  sdate, edate)
 sla  = timesnip(sla,  sdate, edate)
 ssta  = timesnip(ssta,  sdate, edate)
-fsle = timesnip(fsle,  sdate, edate)
 gc()
 ```
 
@@ -170,7 +161,6 @@ match = function(x, y){
   x
 }
 
-fsle = match(x = fsle, y = chla)
 slaa = match(x = slaa, y = chla)
 sla = match(x = sla, y = chla)
 gc()
@@ -184,7 +174,6 @@ chl = bufcoast(chl)
 gc()
 slaa = bufcoast(slaa)
 sla = bufcoast(sla)
-fsle = bufcoast(fsle)
 gc()
 ```
 
@@ -259,7 +248,6 @@ test = scale(values(fronts), from = 1, to = 0)
 vals = scale(values(fronts), from = 1, to = 0)
 values(fronts) = vals
 
-
 plot(fronts)
 ```
 
@@ -299,7 +287,6 @@ x = raster::crop(ssta, e)
 y = raster::crop(chla, e)
 z = raster::crop(slaa, e)
 s = raster::crop(sla, e)
-w = raster::crop(fsle, e)
 q = raster::crop(chl, e)
 
 # by time
@@ -308,7 +295,6 @@ edate = as.Date("2018-10-07")
 x = timesnip(x,  sdate, edate)
 y = timesnip(y,  sdate, edate)
 z = timesnip(z,  sdate, edate)
-w = timesnip(w,  sdate, edate)
 s = timesnip(s,  sdate, edate)
 q = timesnip(q,  sdate, edate)
 gc()
@@ -330,9 +316,6 @@ resample = function(ras, to, method = "bilinear"){
 z = resample(z, to = y, method = "ngb")
 gc()
 
-w = resample(w, to = y, method = "ngb")
-gc()
-
 x = resample(x, to = y, method = "ngb")
 gc()
 
@@ -344,7 +327,6 @@ gc()
 
 extent(x) = extent(y)
 extent(z) = extent(y)
-extent(w) = extent(y)
 extent(q) = extent(y)
 extent(s) = extent(y)
 ```
@@ -381,9 +363,6 @@ gc()
 zdf  = ras2tbl(z,  name = "value")
 gc()
 
-wdf  = ras2tbl(w,  name = "value")
-gc()
-
 qdf  = ras2tbl(q,  name = "value")
 gc()
 
@@ -395,20 +374,16 @@ xyz = data.frame(time = xdf$time,
                  lat  = xdf$lat, 
                  lon  = xdf$lon, 
                  ssta = xdf$value,
-                 fsle = wdf$value,
                  slaa  = zdf$value,
                  sla   = sdf$value,
                  chla  = ydf$value,
                  chl   = qdf$value
                  )
 
-rm(xdf, ydf, zdf, wdf, qdf, sdf)
+rm(xdf, ydf, zdf, qdf, sdf)
 gc() 
 
 xyz = xyz[!is.na(xyz$sla),]
-xyz = xyz[!is.na(xyz$fsle),]
-
-xyz$fsle = xyz$fsle * -1
 gc()
 ```
 
@@ -429,16 +404,13 @@ df$northing = utms[, 1]/1000
 df$easting  = utms[, 2]/1000
 df$doy = as.numeric(format(df$time, '%j'))
 
-df = df[, c("chla", "chl", "ssta", "sla", "slaa", "fsle", "doy", "easting", "northing")]
+df = df[, c("chla", "chl", "ssta", "sla", "slaa", "doy", "easting", "northing")]
 
 # cutting the end date back
 # idx = df$doy < 309
 # df = df[idx, ]
 
 # removing outliers
-
-idx = df$fsle < median(df$fsle) + mad(df$fsle)*10
-df = df[idx, ]
 
 idx = df$slaa < median(df$slaa) + mad(df$slaa)*5
 df = df[idx, ]
@@ -452,64 +424,12 @@ perform GAM
 library(rgdal)
 library(mgcViz)
 
-# Together and the anomaly -----------------------------------------------------
-gam_chla = gam(chla ~ s(slaa) + s(fsle) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = gaussian(link = "identity"))
-
-gc()
-
-gam_ssta = gam(ssta ~ s(slaa) + s(fsle) + s(doy) + s(easting, northing),
-               #method = "REML",
-               data = df,
-               family = gaussian(link = "identity"))
-
-gc()
-
-
-gam_ssta_fsle = gam(ssta ~ s(fsle) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = gaussian(link = "identity"))
-
-gc()
-
-gam_ssta_sla = gam(ssta ~ s(slaa) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = gaussian(link = "identity"))
-
-gc()
-
-# Together and not anomaly -----------------------------------------------------
-gam_chl = gam(chl ~ s(slaa) + s(fsle) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = Gamma(link = "inverse"))
-
-gc()
-
 # Individualy and not anomaly --------------------------------------------------
-
-gam_chl = gam(chl ~ s(fsle) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = Gamma(link = "inverse"))
-
-gc()
 
 gam_chl = gam(chl ~ s(slaa) + s(doy) + s(easting, northing), 
                #method = "REML",
                data = df, 
                family = Gamma(link = "inverse"))
-
-gc()
-
-gam_ssta = gam(ssta ~ s(fsle) + s(doy) + s(easting, northing), 
-               #method = "REML",
-               data = df, 
-               family = gaussian(link = "identity"))
 
 gc()
 
@@ -684,115 +604,6 @@ axis(side = 1,
      mgp = c(2, 1, 0), 
      cex.axis = 1.15)
 ```
-
-correlate across entire bloom
-```{r}
-gc()
-
-w = corLocal(temp[[40]], phyto[[40]], ngb = 11)
-
-plot(temp[[40]])
-plot(phyto[[40]])
-plot(w, col = cmocean("balance")(50))
-```
-
-```{r}
-# this is basicly a stand in vector to be replaced. 
-# could make an empty NA raster of the same dimensions
-cor.raster <- y[[1]]
-# I may have tos cale it from 0-1 depending if that is done already in spearman 
-for(i in 1:ncell(y)) {
-  cor.raster[i] = cor(as.vector(y[i]), as.vector(x[i]), method = 'spearman')
-}
-
-# another way. Would need to be looped
-corr = raster.modifed.ttest(G1, G2)    
-plot(raster(corr), main="spatially adjusted raster correlation")
-```
-
-
-Now for some hovmoller plots
-```{r, fig.width=10}
-# hovmoller(chla_2018, dirXY = y, col.regions=cmocean("rain")(250))
-# library(latticeExtra)
-# hovmoller(chla, 
-#           #panel=panel.2dsmoother, 
-#           #n=1000,
-#           labels=FALSE, 
-#           col.regions=cmocean("rain")(150),
-#           add.contour=FALSE,
-#           xlab='Latitude')
-```
-
-Hovmoller plot of temperature
-```{r, fig.width=10}
-# hovmoller(ssta, dirXY = y, col = "tempo", col.regions=cmocean("thermal")(250))
-# gc()
-```
-
-```{r}
-# library(speedglm)
-# library(ggeffects)
-# 
-# phyto = x[[20]]
-# temp  = y[[20]]
-# extent(phyto) = extent(temp)
-# temp = stack(phyto, temp)
-# 
-# jnk=layerStats(temp, 'pearson', na.rm=T)
-# cor_mat = jnk$`pearson correlation coefficient`
-# 
-# plot(cor_mat)
-# 
-# model = speedglm(ssta ~ slaa, 
-#                 data = df, 
-#                 family=gaussian(link = "identity"))
-# 
-# model_slaa = speedglm(ssta ~ ssta, 
-#                 data = df, 
-#                 family=gaussian(link = "identity"))
-# 
-# plot(ggeffect(model), add.data= FALSE)
-# 
-# for (i in 1:length(figs)) print(figs[[i]])
-```
-
-Cross correllation between tow layers
-```{r}
-library(sp)
-library(spdep)
-   
-data(meuse)
-phyto = y
-temp = x
-
-m = as.data.frame(phyto[[1]], xy = TRUE); 
-n = as.data.frame(temp[[1]], xy = TRUE); 
-coordinates(m)=~x+y
-coordinates(n)=~x+y
-
-I <- crossCorrelation(n$layer.1, m$layer.5.1.2.2, coords = coordinates(m), k=99) 
-
-n$lisa <- I$SCI[,"lsci.xy"]
-
-
-plot(phyto[[1]])
-plot(temp[[1]])
-spplot(n, "lisa")
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

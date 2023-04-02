@@ -5,7 +5,7 @@ source("functions.R")
 source("libraries.R")
 rasterOptions(maxmemory = 123e+10)
 
-xyz = read.csv("..\\data\\xyz_2010_2021_20230218.csv")
+xyz = read.csv("..\\data\\collated\\xyz_2010_2021_20230218.csv")
 
 head(xyz)
 gc()

@@ -157,7 +157,6 @@ ssta  = timesnip(ssta,  sdate, edate)
 gc()
 ```
 
-
 Make FSLE and CHL them the same time domain. Make FSLE same temporal resolution as CHL
 ```{r}
 match = function(x, y){
@@ -177,6 +176,7 @@ slaa = match(x = slaa, y = chla)
 sla = match(x = sla, y = chla)
 gc()
 ```
+
 removing coastal effects
 ```{r}
 ssta = bufcoast(ssta)
@@ -245,7 +245,6 @@ map = function(ras, colmap, zlim,
 }
 ```
 
-
 ```{r}
 fronts = ssta[[75]]
 
@@ -262,7 +261,6 @@ values(fronts) = vals
 
 plot(fronts)
 ```
-
 
 plotting ssta and chl
 ```{r, fig.width=12, fig.height=7}

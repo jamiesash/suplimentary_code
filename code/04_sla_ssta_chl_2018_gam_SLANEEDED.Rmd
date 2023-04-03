@@ -89,7 +89,10 @@ ssta = dap(sdate = sdate,
            id = 'jplMURSST41anom1day',
            var = c("sstAnom", "latitude", "longitude", "time"))
 ssta = oreant(ssta, flip = "y", t1 = TRUE)
+```
 
+load chl
+```{r}
 # now for chl
 sdate = as.Date("2018-06-01")
 edate = as.Date("2022-12-30")
@@ -103,10 +106,19 @@ chl = oreant(chl, t1 = TRUE)
 gc()
 ```
 
+load sla
 ```{r}
-sla = load_nc(path = "C:\\Users\\james\\Desktop\\jamieslife\\data\\infiles\\case_study\\sla\\",
-              patt = "2010_2021_sla.nc",
-              vars = c("latitude", "longitude", "sla", "time"))
+# now for sla
+sdate = as.Date("2018-06-01")
+edate = as.Date("2022-12-30")
+
+sla = dap(sdate = sdate, 
+          edate = edate, 
+          e = e,
+          id = 'nesdisSSH1day',
+          url = "https://coastwatch.pfeg.noaa.gov/erddap/",
+          var = c("sla", "latitude", "longitude", "time"))
+
 gc()
 ```
 

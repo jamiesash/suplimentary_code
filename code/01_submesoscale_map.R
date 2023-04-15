@@ -1,7 +1,6 @@
 
-source("functions.R")
-source("libraries.R")
-source("blooms.R")
+source("code//functions.R")
+source("code//libraries.R")
 library("rerddap")
 library("akima")
 library("dplyr")
@@ -17,7 +16,7 @@ library("plotrix")
 rasterOptions(maxmemory = 120e+10, memfrac = 0.9)
 
 # load pre-constructed data set
-xyz = read.csv("..\\data\\xyz_k_20230131.csv")
+xyz = read.csv("data\\collated\\xyz_k_20230131.csv")
 
 # ------------------------------------------------------------------------------
 # Replace k-means better by day produce table
@@ -91,7 +90,9 @@ rm(cyc, ant, sub)
 # ------------------------------------------------------------------------------
 # Plot function for loop animation
 wdmap <- getMap(resolution = "high")
-my_map = function(day, wdmap, col_map, main = "Eddies and fronts: 2018-06-01 to 2018-11-15"){
+my_map = function(day, wdmap, col_map, 
+                  main = "",
+                  e = c(-170, -130, 18, 36)){
   day = split(day, day$k)
   cyc = day[[1]]
   ant = day[[2]]
@@ -155,8 +156,17 @@ day = unique(df$time)
 day = subset(df, time == day[1])
 wdmap <- getMap(resolution = "high")
 
-my_map(day, wdmap, main = "Eddies and fronts: 2018-06-01")
+png(filename = paste("figures\\eddies_fronts_", Sys.Date(), ".png",sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
 
+my_map(day, wdmap, main = "Eddies and fronts: 2018-06-01",
+       e = c(-165, -140, 23, 32.5))
+
+dev.off()
 
 
 

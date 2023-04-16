@@ -89,7 +89,7 @@ zmat <- apply(tmat[[1]], 2, rev)
 zmat = t(zmat)
 
 # ------------------------------------------------------------------------------
-
+# plotting teh data as a contour plot
 col <- colorRampPalette(c("purple3",  "blue", "cyan", "white", "yellow", "orangered", "red3"))(21)
 
 zlim = c(median(lil$chla)-mad(lil$chla)*2, median(lil$chla) + mad(lil$chla)*2)

@@ -1,11 +1,10 @@
 
 source("code\\functions.R")
 source("code\\libraries.R")
-source("code\\searchcomcat.R")
 library(imputeTS)
 rasterOptions(maxmemory = 120e+10, memfrac = 0.9)
 
-quak <- read.csv("data/quakes_1997_2023.csv")
+quak <- read.csv("data/earthquakes/quakes_1997_2023.csv")
 quak$time <- substr(quak$time, start = 1, stop = 10)
 quak$time <- as.Date(quak$time)
 
@@ -79,7 +78,6 @@ gc()
 chl = bufcoast(chl, 
                region = "Hawaiian Islands", 
                path = "data/USMaritimeLimitsAndBoundariesSHP")
-
 # ------------------------------------------------------------------------------
 # anomalize the chl data
 chla = anomalize(chl, detrend = TRUE)
@@ -141,7 +139,7 @@ title(xlab    = "Year",
       cex.lab = 1.5,
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
-
+dev.off()
 # ------------------------------------------------------------------------------
 # plotting just earthquaes
 
@@ -186,7 +184,7 @@ title(xlab    = "Year",
       cex.lab = 1.5,
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
-
+dev.off()
 # ------------------------------------------------------------------------------
 # I think chl anomaly again?
 
@@ -231,6 +229,7 @@ title(xlab    = "Year",
       cex.lab = 1.5,
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
+dev.off()
 
 # ------------------------------------------------------------------------------
 # plotting raw chl timeseries
@@ -240,6 +239,7 @@ png(filename= paste("earthquakes", Sys.Date(), ".png", sep = ""),
     units = "in",
     res = 300,
     pointsize = 10)
+
 par(mar = c(5, 5, 5, 1))
 plot(time, tc, 
      pch = 19, 
@@ -274,7 +274,7 @@ title(xlab    = "Year",
       cex.lab = 1.5,
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
-
+dev.off()
 
 
 

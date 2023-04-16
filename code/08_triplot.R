@@ -1,11 +1,11 @@
 # USING PREDOWNOADED DATA
 
 # load xyz table ---------------------------------------------------------------
-source("functions.R")
-source("libraries.R")
+source("code\\functions.R")
+source("code\\libraries.R")
 rasterOptions(maxmemory = 123e+10)
 
-xyz = read.csv("..\\data\\collated\\xyz_2010_2021_20230218.csv")
+xyz = read.csv("data\\collated\\xyz_2010_2021_20230218.csv")
 
 head(xyz)
 gc()
@@ -57,6 +57,7 @@ tsect <- function(x, y, z, xreach = 1, yreach = 1, xlen = 120, ylen = 40){
 }
 
 # ------------------------------------------------------------------------------
+# making a matrix fr the contor plot. real data
 library(Thermimage)
 
 temp = subset(xyz, !is.na(chla))
@@ -93,6 +94,12 @@ col <- colorRampPalette(c("purple3",  "blue", "cyan", "white", "yellow", "orange
 
 zlim = c(median(lil$chla)-mad(lil$chla)*2, median(lil$chla) + mad(lil$chla)*2)
 
+png(filename= paste("triplot", Sys.Date(), ".png", sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
 
 drawPalette(zlim = zlim,
             col  = col, 
@@ -110,7 +117,7 @@ image(xvect, yvect, zmat,
       col = col)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey25")
 
-
+dev.off()
 
 
 

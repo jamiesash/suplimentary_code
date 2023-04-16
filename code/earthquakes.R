@@ -1,26 +1,24 @@
 
-source("functions.R")
-source("libraries.R")
-source("searchcomcat.R")
+source("code\\functions.R")
+source("code\\libraries.R")
+source("code\\searchcomcat.R")
 library(imputeTS)
+rasterOptions(maxmemory = 120e+10, memfrac = 0.9)
 
-quak <- read.csv("../data/quakes_1997_2023.csv")
+quak <- read.csv("data/quakes_1997_2023.csv")
 quak$time <- substr(quak$time, start = 1, stop = 10)
 quak$time <- as.Date(quak$time)
 
 gry <- colvect("grey22", alpha = 0.3)
 
-# STL Filter Example -----------------------------------------------------------
-# Loading packages and all pre-writen functions
-# setwd("C:\\Users\\james\\Desktop\\jamieslife\\analysis")
-rasterOptions(maxmemory = 120e+10, memfrac = 0.9)
-
+# ------------------------------------------------------------------------------
 # using a two degree box around aloha
 lons = c(-155, -144)
 lats = c(22, 26)
 e = extent(lons, lats)
 
-# ------------------------------------------------------------------------------
+# loading chl the grossway -----------------------------------------------------
+# I have afunction that does this
 # Set variables
 lat_varid = "lat"
 lon_varid = "lon"
@@ -77,14 +75,17 @@ rm(ras)
 gc()
 
 # ------------------------------------------------------------------------------
-
+# remove coastal effects
 chl = bufcoast(chl, 
                region = "Hawaiian Islands", 
-               path = "../data/USMaritimeLimitsAndBoundariesSHP")
+               path = "data/USMaritimeLimitsAndBoundariesSHP")
 
+# ------------------------------------------------------------------------------
+# anomalize the chl data
 chla = anomalize(chl, detrend = TRUE)
 gc()
-
+# ------------------------------------------------------------------------------
+# stats to be ploted
 tc   <- cellStats(chl, stat="mean", na.rm = TRUE)
 tc   <- as.vector(tc)
 # tc[is.nan(tc)] <- NA
@@ -95,6 +96,14 @@ tca   <- as.vector(tca)
 
 u = mad(tca, na.rm = TRUE)
 o = median(tca, na.rm = TRUE)
+# ------------------------------------------------------------------------------
+# plotting just chl timeseries
+png(filename= paste("chla_time_aloha_", Sys.Date(), ".png", sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
 
 par(mar = c(5, 5, 5, 1))
 plot(time, tca, 
@@ -133,6 +142,15 @@ title(xlab    = "Year",
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
 
+# ------------------------------------------------------------------------------
+# plotting just earthquaes
+
+png(filename= paste("earthquakes", Sys.Date(), ".png", sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
 
 par(mar = c(5, 5, 5, 1))
 plot(quak$time, quak$mag, 
@@ -169,9 +187,16 @@ title(xlab    = "Year",
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
 
-
-
 # ------------------------------------------------------------------------------
+# I think chl anomaly again?
+
+png(filename= paste("chl_anom", Sys.Date(), ".png", sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
+
 par(mar = c(5, 5, 5, 1))
 plot(time, tca, 
      pch = 19, 
@@ -207,6 +232,14 @@ title(xlab    = "Year",
       line    = 2.5)
 box(which = "plot", lty = "solid", lwd = 3, col = "grey12")
 
+# ------------------------------------------------------------------------------
+# plotting raw chl timeseries
+png(filename= paste("earthquakes", Sys.Date(), ".png", sep = ""),
+    width = 3.5,
+    height = 6,
+    units = "in",
+    res = 300,
+    pointsize = 10)
 par(mar = c(5, 5, 5, 1))
 plot(time, tc, 
      pch = 19, 

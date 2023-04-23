@@ -2188,7 +2188,51 @@ polymask <- function(ras,
   ras
 }
 
-
+# dap --------------------------------------------------------------------------
+# the data loading function we've all been waiting for
+dap = function(sdate, edate, e, 
+               id = 'jplMURSST41anom1day', 
+               url = "https://coastwatch.pfeg.noaa.gov/erddap/",
+               var = c("sstAnom", "latitude", "longitude", "time")) {
+  # input is a datetime and an extent. It grabs that raster
+  dap_that_ass = function(x, data_info, e){
+    data = griddap(data_info, 
+                   latitude = e[3:4], 
+                   longitude = e[1:2], 
+                   time = c(as.character(x),as.character(x)), 
+                   fields = 'all')
+    data = nc_open(data$summary$filename)
+    ras  = ncvar_get(data, varid = var[1])
+    lats = ncvar_get(data, varid = var[2])
+    lons = ncvar_get(data, varid = var[3])
+    time = ncvar_get(data, varid = var[4])
+    time = as.Date(as.POSIXct(time, origin = "1970-01-01"))
+    nc_close(data)
+    rm(data)
+    
+    ras = raster(ras)
+    extent(ras) = extent(min(lons), max(lons), min(lats), max(lats))
+    ras = setZ(ras, z = time, name = "time")
+    crs(ras) = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    ras
+  }
+  
+  time = seq(sdate, edate, by = 1)
+  time = as.list(time)
+  
+  data_info = info(id, 
+                   url = url)
+  
+  ras  = lapply(time, FUN = dap_that_ass, data_info = data_info, e = e)
+  time = lapply(ras, getZ)
+  time = unlist(time)
+  time = as.Date(time)
+  ext    = lapply(ras, extent)
+  ras  = stack(ras)
+  extent(ras) = ext[[1]]
+  ras = setZ(ras, z= time, name = "time")
+  ras
+}
 
 # laodsat for opendap ----------------------------------------------------------
 # DEPRECIATED

@@ -11,7 +11,7 @@ lats = c(17, 45)
 e = extent(lons, lats)
 
 # ------------------------------------------------------------------------------
-
+# need to fix my opendap function
 # Set variables
 lat_varid = "lat"
 lon_varid = "lon"
@@ -76,23 +76,46 @@ rm(chl)
 gc()
 
 # ------------------------------------------------------------------------------
-# correct oreantation
-chl = subsum(chl)
+# subset the summer months
+chl  = subsum(chl)
 chla = subsum(chla)
 gc()
 
 # ------------------------------------------------------------------------------
-# Subset summer and average fro climatology figure
-cmap   = calc(chla, fun = mean, na.rm = TRUE)
+# Subset summer and average fro climatology figure of chl anomaly
+camap   = calc(chla, fun = mean, na.rm = TRUE)
 zlim = c(0, 0.012)
+camap = raster::clamp(camap, zlim[1], zlim[2])
+
+# Subset summer and average fro climatology figure
+cmap   = calc(chl, fun = mean, na.rm = TRUE)
+
+zlim = c(0.05, 0.10)
 cmap = raster::clamp(cmap, zlim[1], zlim[2])
 
 # ------------------------------------------------------------------------------
+# 2018 bloom plots
+sdate = as.Date("2018-06-01")
+edate = as.Date("2018-11-15")
+chl_2018 = timesnip(chl,  sdate, edate)
+chla_2018 = timesnip(chla,  sdate, edate)
+chla_2018 = bufcoast(chla_2018)
+
+# ------------------------------------------------------------------------------
+# For CHL anomaly as well?
+zlim = c(0.02, 0.15)
+cmap_2018   = calc(chl_2018, fun = mean, na.rm = TRUE)
+cmap_2018 = raster::clamp(cmap_2018, lower = zlim[1], upper=zlim[2])
+
+zlim = c(-0.005, 0.025)
+cmap_2018_anom   = calc(chla_2018, fun = mean, na.rm = TRUE)
+cmap_2018_anom = raster::clamp(cmap_2018_anom, lower=zlim[1], upper=zlim[2])
+# ------------------------------------------------------------------------------
+
 # Plotting CHL anomaly official plot
 wdmap = getMap(resolution = "high")
-e = extent(cmap)
+e = extent(camap)
 colmap = cmocean("rain")(50)
-
 
 png(filename= paste("chla_map", Sys.Date(), ".png", sep = ""),
     width = 3.5,
@@ -109,7 +132,7 @@ nf = graphics::layout(lay,
                       widths = c(14, 1))
 
 par(mar = c(4,4,2,1))
-image(cmap,
+image(camap,
       ylim = c(18, 35),
       xlim = c(-170, -130),
       xlab = "",
@@ -155,16 +178,6 @@ drawPalette(zlim = zlim,
             fullpage = TRUE)
 
 dev.off()
-
-# ------------------------------------------------------------------------------
-# Subset summer and average fro climatology figure
-# zlim = c(0, 0.2)
-# cmap = raster::clamp(temp, zlim[1], zlim[2])
-
-cmap   = calc(chl, fun = mean, na.rm = TRUE)
-
-zlim = c(0.05, 0.10)
-cmap = raster::clamp(cmap, zlim[1], zlim[2])
 
 # ------------------------------------------------------------------------------
 # Plotting CHL raw official plot
@@ -234,24 +247,6 @@ drawPalette(zlim = c(0.03, 0.12),
             cex  = 1.25,
             fullpage = TRUE)
 dev.off()
-
-# ------------------------------------------------------------------------------
-# 2018 bloom plots
-sdate = as.Date("2018-06-01")
-edate = as.Date("2018-11-15")
-chl_2018 = timesnip(chl,  sdate, edate)
-chla_2018 = timesnip(chla,  sdate, edate)
-chla_2018 = bufcoast(chla_2018)
-
-# ------------------------------------------------------------------------------
-# For CHL anomaly as well?
-zlim = c(0.02, 0.15)
-cmap_2018   = calc(chl_2018, fun = mean, na.rm = TRUE)
-cmap_2018 = raster::clamp(cmap_2018, lower = zlim[1], upper=zlim[2])
-
-zlim = c(-0.005, 0.025)
-cmap_2018_anom   = calc(chla_2018, fun = mean, na.rm = TRUE)
-cmap_2018_anom = raster::clamp(cmap_2018_anom, lower=zlim[1], upper=zlim[2])
 
 # ------------------------------------------------------------------------------
 # Plotting CHL 2018 official plot

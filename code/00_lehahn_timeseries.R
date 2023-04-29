@@ -1,9 +1,15 @@
+
+#load functions and libraries
 source("code\\functions.R")
 source("code\\libraries.R")
 source("code\\blooms.R")
 rasterOptions(maxmemory = 120e+10, memfrac = 0.9)
 knitr::opts_chunk$set(echo = TRUE)
+
 # ------------------------------------------------------------------------------
+# I added a few funcions here because its an older script and I changed the 
+# functions in my lararies R file
+
 # input is a boolian raster layer of 0/1 
 # output is a data frame with only high values included
 # Downlsize reduces the size of the data set
@@ -186,9 +192,10 @@ jamie_theme <- function(x,
                         ylim = range(y),
                         xlim = range(x),
                         main = "",
-                        #labels = seq(from = min(x)+5, to   = max(x)-5, by   = 15),
-                        labels = round(seq(range(x)[1]+1, range(x)[2]-1, length = 6), 1),
-                        at =  round(seq(range(x)[1]+1, range(x)[2]-1, length = 6), 1),
+                        labels = round(seq(range(x)[1]+1, range(x)[2]-1, 
+                                           length = 6), 1),
+                        at =  round(seq(range(x)[1]+1, range(x)[2]-1, 
+                                        length = 6), 1),
                         dt = TRUE,
                         yaxes = TRUE,
                         xaxes = TRUE,
@@ -244,8 +251,8 @@ jamie_theme <- function(x,
 sdate = as.Date("2018-01-01")
 edate = as.Date("2019-01-01") 
 
-lons = c(-165, -130)
-lats = c( 18,   35)
+lons = c(-160, -125)
+lats = c( 18,   37)
 e = extent(lons, lats)
 
 # cache_list()
@@ -337,7 +344,7 @@ gc()
 
 # ------------------------------------------------------------------------------
 # Calculate CHL anomaly
-chla = anomalize(chl, detrend = FALSE)
+chla = anomalize(chl, detrend = TRUE)
 chlb = bool(chla)
 gc()
 
@@ -442,7 +449,10 @@ for(i in 1:nrow(id)){
   oneprof = subset(float, 
                    float_serial_no == id$platform_number[i] & 
                      cycle_number == id$cycle_number[i])
-  if(nrow(oneprof) > 4) mixed[i, ] = mldchu(ctd = oneprof, x = "rho", y = "pres_adjusted", n = 10)
+  if(nrow(oneprof) > 4) mixed[i, ] = mldchu(ctd = oneprof, 
+                                            x = "rho", 
+                                            y = "pres_adjusted", 
+                                            n = 10)
 }
 
 # ------------------------------------------------------------------------------
@@ -467,10 +477,14 @@ bloom_2018$mld = mix_mod
 # CHL concentration and units conversion
 # quik and dirty way of handling clouds. I hope hawiann islands are not in this extent
 s = dim(chl_2018)
-n = s[1] * s[2]
+n = s[1] * s[2] * s[3]
+# total cloud cover percent across all data
 clouds = sum(is.na(values(chl_2018))) / n
 clouds = unname(clouds)
-bloom_2018$area =  bloom_2018$area * (1+clouds)
+# True * clouds = measured and moving clouds over. Should be less than 1. 
+clouds = 1 - couds
+# adding the missing percent back assuming even cloud cover
+bloom_2018$area =  bloom_2018$area/clouds
 
 # In mg
 bloom_2018$bio = (bloom_2018$mld * bloom_2018$con * bloom_2018$area * 1e+06)
@@ -479,6 +493,18 @@ bloom_2018$bio = bloom_2018$bio/(1e+12)
 bloom_2018$area = bloom_2018$area/1e+05 #10e05
 bloom_2018$con = bloom_2018$con*1000 #to ug
 elephants = max(bloom_2018$bio*1000)/ 5.98742 # elephant in t
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------- FIGURES --------------------------------------
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Data visualization timeseries

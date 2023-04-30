@@ -350,8 +350,8 @@ gc()
 
 # ------------------------------------------------------------------------------
 # checking how well the filter did
-c_time = cellStats(chla, stat='mean', na.rm=TRUE)
-plot(1:length(c_time), c_time)
+# c_time = cellStats(chla, stat='mean', na.rm=TRUE)
+# plot(1:length(c_time), c_time)
 
 # ------------------------------------------------------------------------------
 # Subset time-span of interest: 2018 summer bloom
@@ -464,7 +464,7 @@ chl_float = subset(float, pres < 40)
 
 # ------------------------------------------------------------------------------
 # Loess running average
-# I may want to change tsa to include magnitude. Maybe keep seperate
+# I may want to change tsa to include magnitude. Maybe keep separate
 t     = as.numeric(bloom_2018$time)
 
 curve = loess(mix$pres_adjusted ~ mix$time) 
@@ -482,7 +482,7 @@ n = s[1] * s[2] * s[3]
 clouds = sum(is.na(values(chl_2018))) / n
 clouds = unname(clouds)
 # True * clouds = measured and moving clouds over. Should be less than 1. 
-clouds = 1 - couds
+clouds = 1 - clouds
 # adding the missing percent back assuming even cloud cover
 bloom_2018$area =  bloom_2018$area/clouds
 
@@ -507,17 +507,14 @@ elephants = max(bloom_2018$bio*1000)/ 5.98742 # elephant in t
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Data visualization timeseries
+
+# Data visualization time series
 png(filename= paste("biomass_timeseries", Sys.Date(), ".png", sep = ""),
-    width = 3.5,
-    height = 6,
+    width = 4.5,
+    height = 5,
     units = "in",
     res = 300,
-    pointsize = 10)
-
-# width = 3
-# width_px = 3 * 300
-# cex = width
+    pointsize = 8)
 
 layout(matrix(c(1,  
                 2,
@@ -535,20 +532,15 @@ y = bloom_2018$area
 jamie_theme(x = x, 
             y = y, 
             dt  =FALSE,
+            ylim = c(0, 35),
             main = "", 
             xlab = "",
-            #ylim = c(2, 25),
-            #xlim = c(as.Date("2018-07-01"), as.Date("2018-11-05")),
             ylab = expression(Surface ~ Area ~ (km^2 ~ e05)),
             line = 0.75,
             adj = 0,
             yaxes = TRUE,
             xaxes = FALSE)
 points(x, y,  pch = 20, cex = 1.25) 
-box(which = "plot", 
-    lty = "solid", 
-    lwd = 1, 
-    col = colvect("grey22", alpha = 0.9))
 
 # CHL Concentration
 par(mar = c(1, 5, 1, 3))
@@ -556,8 +548,7 @@ x = bloom_2018$time
 y = bloom_2018$bio
 jamie_theme(x = x,
             y = y,
-            #xlim = c(as.Date("2018-07-01"), as.Date("2018-11-05")),
-            #ylim = c(0, 10),
+            ylim = c(0, 12),
             dt = FALSE,
             line = 0.75,
             adj = 0.0,
@@ -567,10 +558,6 @@ jamie_theme(x = x,
             ylab = expression(Chlorophyll ~ Biomass ~ (kt)),
             xaxes = FALSE)
 points(x, y, pch = 20, cex = 1.25)
-box(which = "plot", 
-    lty = "solid", 
-    lwd = 1, 
-    col = colvect("grey22", alpha = 0.9))
 
 # CHL Summed Magnitude
 par(mar = c(4, 5, 0, 3))
@@ -578,22 +565,16 @@ y = bloom_2018$con/1000
 x = as.Date(as.numeric(bloom_2018$time))
 jamie_theme(x = x, 
             y = y, 
-            #xlim = c(as.Date("2018-07-01"), as.Date("2018-11-05")),
+            ylim = c(0.06, 0.15),
             dt = TRUE,
-            #ylim =  c(60, 145),
             line = -1,
             adj = 0.03,
             main = "", 
             xaxes = TRUE,
             yaxes = TRUE,
             xlab = "Date Time",
-            ylab = expression(Chlorophyll ~ (ug ~ m^{-3}))
-)
+            ylab = expression(Chlorophyll ~ (ug ~ m^{-3})))
 points(x, y,  pch = 20, cex = 1.25)
-box(which = "plot", 
-    lty = "solid", 
-    lwd = 1, 
-    col = colvect("grey22", alpha = 0.9))
 dev.off()
 
 # ------------------------------------------------------------------------------

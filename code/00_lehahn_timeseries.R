@@ -221,21 +221,21 @@ jamie_theme <- function(x,
        ny = NULL, # Y-axis divided in three sections
        lty = 2, 
        col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
-  box(which = "plot", 
-      lty = "solid", 
-      lwd = 3, 
-      col = colvect("grey22", alpha = 0.9))
+  # box(which = "plot", 
+  #     lty = "solid", 
+  #     lwd = 3, 
+  #     col = colvect("grey22", alpha = 0.9))
   if(xaxes){axis(side = 1,
                  at = at,
                  labels = labels,
                  las = 1, 
-                 lwd = 2, 
+                 lwd = 1.5, 
                  mgp = c(2, 1, 0), 
                  cex.axis = 1.15,
                  col = colvect("grey22", alpha = 0.9))}
   if(yaxes){axis(side = 2,
                  las  = 2, 
-                 lwd  = 2, 
+                 lwd  = 1.5, 
                  mgp  = c(1, 0.75, 0), 
                  cex.axis = 1.15,
                  col = colvect("grey22", alpha = 0.9))}
@@ -475,7 +475,7 @@ bloom_2018$mld = mix_mod
 
 # ------------------------------------------------------------------------------
 # CHL concentration and units conversion
-# quik and dirty way of handling clouds. I hope hawiann islands are not in this extent
+# handling clouds. I hope hawiann islands are not in this extent
 s = dim(chl_2018)
 n = s[1] * s[2] * s[3]
 # total cloud cover percent across all data
@@ -486,15 +486,21 @@ clouds = 1 - clouds
 # adding the missing percent back assuming even cloud cover
 bloom_2018$area =  bloom_2018$area/clouds
 
+# ------------------------------------------------------------------------------
+
 # In mg
 bloom_2018$bio = (bloom_2018$mld * bloom_2018$con * bloom_2018$area * 1e+06)
+
 # mg to kilotons 
 bloom_2018$bio = bloom_2018$bio/(1e+12)
 bloom_2018$area = bloom_2018$area/1e+05 #10e05
-bloom_2018$con = bloom_2018$con*1000 #to ug
+bloom_2018$con = bloom_2018$con # in mg/m^3
 elephants = max(bloom_2018$bio*1000)/ 5.98742 # elephant in t
 
 # ------------------------------------------------------------------------------
+# saving the data to harddisck
+write.csv(bloom_2018, 
+          file = paste("data/fig_data/lehan", Sys.Date(), ".csv", sep = ""))
 
 # ------------------------------------------------------------------------------
 
@@ -505,12 +511,14 @@ elephants = max(bloom_2018$bio*1000)/ 5.98742 # elephant in t
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-
+# subsetiign for plotting
+tmp = subset(bloom_2018, time < as.Date("2018-10-20"))
+tmp = subset(tmp, time > as.Date("2018-07-15"))
 # ------------------------------------------------------------------------------
 
 # Data visualization time series
-png(filename= paste("biomass_timeseries", Sys.Date(), ".png", sep = ""),
-    width = 4.5,
+png(filename= paste("figures/biomass_timeseries_", Sys.Date(), ".png", sep = ""),
+    width = 4,
     height = 5,
     units = "in",
     res = 300,
@@ -527,25 +535,29 @@ layout(matrix(c(1,
 
 # Area
 par(mar = c(0, 5, 2, 3))
-x = as.numeric(bloom_2018$time)
-y = bloom_2018$area
+x = as.numeric(tmp$time)
+y = tmp$area
 jamie_theme(x = x, 
             y = y, 
             dt  =FALSE,
             ylim = c(0, 35),
             main = "", 
             xlab = "",
-            ylab = expression(Surface ~ Area ~ (km^2 ~ e05)),
+            ylab = expression(Surface ~ Area ~ (km^2 ~ x10^{5})),
             line = 0.75,
             adj = 0,
             yaxes = TRUE,
             xaxes = FALSE)
 points(x, y,  pch = 20, cex = 1.25) 
+# box(which = "plot",
+#     lty = "solid",
+#     lwd = 1.5,
+#     col = colvect("black", alpha = 0.9))
 
 # CHL Concentration
 par(mar = c(1, 5, 1, 3))
-x = bloom_2018$time
-y = bloom_2018$bio
+x = tmp$time
+y = tmp$bio
 jamie_theme(x = x,
             y = y,
             ylim = c(0, 12),
@@ -558,11 +570,15 @@ jamie_theme(x = x,
             ylab = expression(Chlorophyll ~ Biomass ~ (kt)),
             xaxes = FALSE)
 points(x, y, pch = 20, cex = 1.25)
+# box(which = "plot",
+#     lty = "solid",
+#     lwd = 1.5,
+#     col = colvect("black", alpha = 0.9))
 
 # CHL Summed Magnitude
 par(mar = c(4, 5, 0, 3))
-y = bloom_2018$con/1000
-x = as.Date(as.numeric(bloom_2018$time))
+y = tmp$con
+x = as.Date(as.numeric(tmp$time))
 jamie_theme(x = x, 
             y = y, 
             ylim = c(0.06, 0.15),
@@ -572,9 +588,14 @@ jamie_theme(x = x,
             main = "", 
             xaxes = TRUE,
             yaxes = TRUE,
-            xlab = "Date Time",
-            ylab = expression(Chlorophyll ~ (ug ~ m^{-3})))
+            xlab = "Month Day",
+            ylab = expression(Chlorophyll ~ (mg ~ m^{-3})))
 points(x, y,  pch = 20, cex = 1.25)
+# box(which = "plot",
+#     lty = "solid",
+#     lwd = 1.5,
+#     col = colvect("black", alpha = 0.9))
+
 dev.off()
 
 # ------------------------------------------------------------------------------

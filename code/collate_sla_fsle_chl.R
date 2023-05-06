@@ -252,8 +252,8 @@ xyz$fsle = xyz$fsle * -1
 gc()
 
 # ------------------------------------------------------------------------------
-
-
+# saving the data to harddisck
+write.csv(xyz, file = paste("data/collated/xyz", Sys.Date(), ".csv", sep = ""))
 
 
 

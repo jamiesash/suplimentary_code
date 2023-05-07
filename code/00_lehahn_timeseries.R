@@ -499,9 +499,11 @@ elephants = max(bloom_2018$bio*1000)/ 5.98742 # elephant in t
 
 # ------------------------------------------------------------------------------
 # saving the data to harddisck
-write.csv(bloom_2018, 
-          file = paste("data/fig_data/lehan", Sys.Date(), ".csv", sep = ""))
+# write.csv(bloom_2018, 
+#           file = paste("data/fig_data/lehan", Sys.Date(), ".csv", sep = ""))
 
+bloom_2018 = read.csv("data/fig_data/lehan2023-05-06.csv")
+bloom_2018$time = as.Date(bloom_2018$time)
 # ------------------------------------------------------------------------------
 
 # ------------------------------- FIGURES --------------------------------------
@@ -509,7 +511,7 @@ write.csv(bloom_2018,
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-
+head(tmp)
 # ------------------------------------------------------------------------------
 # subsetiign for plotting
 tmp = subset(bloom_2018, time < as.Date("2018-10-20"))
@@ -523,6 +525,16 @@ png(filename= paste("figures/biomass_timeseries_", Sys.Date(), ".png", sep = "")
     units = "in",
     res = 300,
     pointsize = 8)
+
+# pdf(paste("figures/biomass_timeseries_", Sys.Date(), ".pdf", sep = ""),   # The directory you want to save the file in
+#     width = 5, # The width of the plot in inches
+#     height = 6,
+#     res = 300) # The height of the plot in inches
+# 
+# 
+# # saving to an eps file
+# setEPS()
+# postscript(paste("figures/biomass_timeseries_", Sys.Date(), ".eps", sep = ""))
 
 layout(matrix(c(1,  
                 2,
@@ -577,8 +589,8 @@ points(x, y, pch = 20, cex = 1.25)
 
 # CHL Summed Magnitude
 par(mar = c(4, 5, 0, 3))
-y = tmp$con
-x = as.Date(as.numeric(tmp$time))
+y = tmp$con/1000
+x = as.Date(tmp$time)
 jamie_theme(x = x, 
             y = y, 
             ylim = c(0.06, 0.15),

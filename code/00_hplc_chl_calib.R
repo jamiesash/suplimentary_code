@@ -117,7 +117,7 @@ plotit <- function(x, y,
        ny = NULL, # Y-axis divided in three sections
        lty = 2, 
        col = colvect(c("gray69"), alpha = 0.6), 
-       lwd = 0.75)
+       lwd = 1)
   lines(xm, ym, lwd = 1,  col = "grey12")
   points(x, y, 
          pch = pch, 
@@ -322,82 +322,14 @@ r2 <- round(1 - model1$deviance/model1$null.deviance, 3)
 
 # ------------------------------------------------------------------------------
 
-png(filename = paste("figures\\bloom_centers_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
-
-# Boxplot
-layout( matrix(c(1,
-                 2),
-               ncol = 1,
-               nrow = 2, 
-               byrow = TRUE),
-        heights = c(1.85, 1))
-
-plotit(x = x, y = y, abline = c(m, b, r2),
-       tex_x = 0.15,
-       tex_y = 0.05,
-       xlab = "HPLC Bottle Samples [mg/L]",
-       ylab = "GlobColor Daily GSM CHL1 L3 [mg/m^3]",
-       sub = "a)",
-       ylim = c(0.02, 0.25),
-       xlim = c(0.02, 0.25),
-       line = -1.2,
-       adj = 0.05,
-       mar = c(5, 5, 5, 5))
-title("HPLC to CHLsat Comparison and CHL Seasonality", line = 1, adj = 0, cex.main = 1.5)
-
-boxit(x2 = box_df$month,
-      x1 = box_df$ID,
-      col = colvect(c("ivory4", "grey22"), alpha = c(0.5,0.9)),
-      add = FALSE,
-      y = box_df$chl,
-      ylim = c(0.025, 0.2),
-      legend = c("HPLC", "Satelite"),
-      data = box_df,
-      labels = as.character(1:12),
-      at = seq(from = 1, to = 24, by = 2) + 0.5,
-      sub = "b)",
-      xlab = "Month of year",
-      ylab = "Mean CHL [mg/m^3]",
-      line = -1.1,
-      adj = 0.025,
-      mar = c(5, 5, 3, 3))
-
-dev.off()
-
-# ------------------------------------------------------------------------------
-# plotting the box by itself
-boxit(x2 = box_df$month,
-      x1 = box_df$ID,
-      col = colvect(c("ivory4", "grey22"), alpha = c(0.5,0.9)),
-      add = FALSE,
-      y = box_df$chl,
-      ylim = c(0.025, 0.22),
-      legend = c("HPLC", "Satelite"),
-      data = box_df,
-      labels = as.character(1:12),
-      at = seq(from = 1, to = 24, by = 2) + 0.5,
-      sub = "b)",
-      xlab = "Month of year",
-      ylab = "Mean CHL [mg/m^3]",
-      line = -1.1,
-      adj = 0.025,
-      mar = c(5, 5, 3, 3))
-
-# ------------------------------------------------------------------------------
-# setEPS()
-# postscript(paste("figures\\hplc_chlsat_", dt, ".peps", sep = ""))
-
-
 dt = gsub("-", "", as.character(Sys.Date()))
 pdf(paste("figures\\hplc_chlsat_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
-    width = 8, # The width of the plot in inches
-    height = 11,
-    pointsize = 12) # The height of the plot in inches
+    width = 5, # The width of the plot in inches
+    height = 6,
+    pointsize = 10) # The height of the plot in inches
+
+# setEPS()
+# postscript(paste("figures\\hplc_chlsat_", dt, ".eps", sep = ""))
 
 # Boxplot
 layout( matrix(c(1,
@@ -439,6 +371,26 @@ boxit(x2 = box_df$month,
       mar = c(4, 4, 0, 2))
 
 dev.off()
+
+# ------------------------------------------------------------------------------
+# plotting the box by itself
+boxit(x2 = box_df$month,
+      x1 = box_df$ID,
+      col = colvect(c("ivory4", "grey22"), alpha = c(0.5,0.9)),
+      add = FALSE,
+      y = box_df$chl,
+      ylim = c(0.025, 0.22),
+      legend = c("HPLC", "Satelite"),
+      data = box_df,
+      labels = as.character(1:12),
+      at = seq(from = 1, to = 24, by = 2) + 0.5,
+      sub = "b)",
+      xlab = "Month of year",
+      ylab = "Mean CHL [mg/m^3]",
+      line = -1.1,
+      adj = 0.025,
+      mar = c(5, 5, 3, 3))
+
 
 
            

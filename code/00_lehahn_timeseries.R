@@ -220,7 +220,7 @@ jamie_theme <- function(x,
   grid(nx = NULL, # X-axis divided in two sections
        ny = NULL, # Y-axis divided in three sections
        lty = 2, 
-       col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
+       col = colvect(c("gray69"), alpha = 0.6), lwd = 1)
   # box(which = "plot", 
   #     lty = "solid", 
   #     lwd = 3, 
@@ -231,20 +231,20 @@ jamie_theme <- function(x,
                  las = 1, 
                  lwd = 1.5, 
                  mgp = c(2, 1, 0), 
-                 cex.axis = 1.15,
+                 cex.axis = 1,
                  col = colvect("grey22", alpha = 0.9))}
   if(yaxes){axis(side = 2,
                  las  = 2, 
                  lwd  = 1.5, 
                  mgp  = c(1, 0.75, 0), 
-                 cex.axis = 1.15,
+                 cex.axis = 1,
                  col = colvect("grey22", alpha = 0.9))}
   title(main = main,
         cex.lab = cex.main,
         line = line,
         adj = adj)
-  title(ylab = ylab, cex.lab = 1.25, line = 2.5)
-  title(xlab = xlab, cex.lab = 1.25, line = 2.25)
+  title(ylab = ylab, cex.lab = 1, line = 2.5)
+  title(xlab = xlab, cex.lab = 1, line = 2.25)
 }
 # ------------------------------------------------------------------------------
 # loading data via opendap had issues with over engineered function
@@ -511,30 +511,21 @@ bloom_2018$time = as.Date(bloom_2018$time)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-head(tmp)
-# ------------------------------------------------------------------------------
 # subsetiign for plotting
 tmp = subset(bloom_2018, time < as.Date("2018-10-20"))
 tmp = subset(tmp, time > as.Date("2018-07-15"))
+head(tmp)
 # ------------------------------------------------------------------------------
+# Biomass Timesries 
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures/biomass_timeseries_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 5, # The width of the plot in inches
+    height = 6, # The height of the plot in inches
+    pointsize = 15) 
 
-# Data visualization time series
-png(filename= paste("figures/biomass_timeseries_", Sys.Date(), ".png", sep = ""),
-    width = 4,
-    height = 5,
-    units = "in",
-    res = 300,
-    pointsize = 8)
-
-# pdf(paste("figures/biomass_timeseries_", Sys.Date(), ".pdf", sep = ""),   # The directory you want to save the file in
-#     width = 5, # The width of the plot in inches
-#     height = 6,
-#     res = 300) # The height of the plot in inches
-# 
-# 
-# # saving to an eps file
-# setEPS()
-# postscript(paste("figures/biomass_timeseries_", Sys.Date(), ".eps", sep = ""))
+# saving to an eps file
+setEPS()
+postscript(paste("figures/biomass_timeseries_", Sys.Date(), ".eps", sep = ""))
 
 layout(matrix(c(1,  
                 2,
@@ -560,11 +551,7 @@ jamie_theme(x = x,
             adj = 0,
             yaxes = TRUE,
             xaxes = FALSE)
-points(x, y,  pch = 20, cex = 1.25) 
-# box(which = "plot",
-#     lty = "solid",
-#     lwd = 1.5,
-#     col = colvect("black", alpha = 0.9))
+points(x, y,  pch = 20, cex = 1) 
 
 # CHL Concentration
 par(mar = c(1, 5, 1, 3))
@@ -581,11 +568,7 @@ jamie_theme(x = x,
             yaxes = TRUE,
             ylab = expression(Chlorophyll ~ Biomass ~ (kt)),
             xaxes = FALSE)
-points(x, y, pch = 20, cex = 1.25)
-# box(which = "plot",
-#     lty = "solid",
-#     lwd = 1.5,
-#     col = colvect("black", alpha = 0.9))
+points(x, y, pch = 20, cex = 1)
 
 # CHL Summed Magnitude
 par(mar = c(4, 5, 0, 3))
@@ -603,35 +586,31 @@ jamie_theme(x = x,
             xlab = "Month Day",
             ylab = expression(Chlorophyll ~ (mg ~ m^{-3}))
             )
-points(x, y,  pch = 20, cex = 1.25)
-# box(which = "plot",
-#     lty = "solid",
-#     lwd = 1.5,
-#     col = colvect("black", alpha = 0.9))
+points(x, y,  pch = 20, cex = 1)
 
 dev.off()
 
 # ------------------------------------------------------------------------------
-png(filename= paste("mixed_layer_", Sys.Date(), ".png", sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
-
-# Mixed Layer Depth
-curve = loess(mix$pres_adjusted ~ as.numeric(mix$time)) 
-curve = predict(curve, type = "response")
-
-jamie_theme(x = mix$time, y = mix$pres_adjusted, 
-            ylim = c(80, 0),
-            main = "2018 Bloom Mixed Layer Depth", 
-            xlab = "Date Time",
-            ylab = "Pressure [dbar]")
-points(mix$time, mix$pres_adjusted, pch = 20, cex = 0.6)
-points(mix$time, curve, pch = 20, cex = 1)
-points(bloom_2018$time, bloom_2018$mld, col = "red", lwd = 2, pch = 20)
-dev.off()
+# png(filename= paste("mixed_layer_", Sys.Date(), ".png", sep = ""),
+#     width = 3.5,
+#     height = 6,
+#     units = "in",
+#     res = 300,
+#     pointsize = 10)
+# 
+# # Mixed Layer Depth
+# curve = loess(mix$pres_adjusted ~ as.numeric(mix$time)) 
+# curve = predict(curve, type = "response")
+# 
+# jamie_theme(x = mix$time, y = mix$pres_adjusted, 
+#             ylim = c(80, 0),
+#             main = "2018 Bloom Mixed Layer Depth", 
+#             xlab = "Date Time",
+#             ylab = "Pressure [dbar]")
+# points(mix$time, mix$pres_adjusted, pch = 20, cex = 0.6)
+# points(mix$time, curve, pch = 20, cex = 1)
+# points(bloom_2018$time, bloom_2018$mld, col = "red", lwd = 2, pch = 20)
+# dev.off()
 # ------------------------------------------------------------------------------
 # Float Tracks
 
@@ -655,27 +634,27 @@ png(filename= paste("float_tracks_", Sys.Date(), ".png", sep = ""),
     res = 300,
     pointsize = 10)
 
-jamie_theme(x = id$longitude, y = id$latitude, 
+jamie_theme(x = id$longitude, y = id$latitude,
             dt = FALSE,
-            main = "2018 bloom argo-floats tracks", 
+            main = "2018 bloom argo-floats tracks",
             xlab = "Longitude",
             ylab = "Latitude",
-            xlim = e[1:2], 
+            xlim = e[1:2],
             ylim = e[3:4])
 sz <- scale01(id$time)
 points(id$longitude, id$latitude,
        #col = as.character(id$float_serial_no),
        col = as.character(id$platform_number),
        cex = sz*1.5,
-       pch = 20) 
-plot(wdmap, 
-     xlim = e[1:2], 
-     ylim = e[3:4], 
-     asp = 1, 
-     bg = "black", 
-     border = "black", 
-     col = "black", 
-     #wrap = c(-180, 180), 
+       pch = 20)
+plot(wdmap,
+     xlim = e[1:2],
+     ylim = e[3:4],
+     asp = 1,
+     bg = "black",
+     border = "black",
+     col = "black",
+     #wrap = c(-180, 180),
      add = TRUE)
 box(which = "plot", lty = "solid", lwd = 3, col = colvect("grey22", alpha = 0.9))
 

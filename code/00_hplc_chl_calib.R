@@ -12,6 +12,136 @@ lats = c( 22.7,   22.8)
 e = extent(lons, lats)
 
 # ------------------------------------------------------------------------------
+# for the box plot
+boxit <- function(x1, x2, y, data,
+                  xaxes = TRUE, 
+                  yaxes = TRUE,
+                  col=c("slateblue1" , "tomato"),
+                  ylim = c(min(y, na.rm = TRUE), max(y, na.rm = TRUE)),
+                  sub = "Car Milage Data",
+                  xlab = "", 
+                  main = "",
+                  ylab = "Miles Per Gallon",
+                  legend = c("ALOHA", "30N"),
+                  add = FALSE,
+                  at = 1:24,
+                  labels = as.character(1:12),
+                  cex.main = 1.5,
+                  cex.lab = 1.5,
+                  mar = c(5, 5, 5, 3)) {
+  par(mar = mar)
+  boxplot(y ~ x1*x2, 
+          data = box_df,
+          ylim = ylim,
+          main = main,
+          col=col,
+          xlab = "", 
+          ylab = "", 
+          add = add,
+          whisklty = 1,
+          medlty = "blank",
+          outline = FALSE, 
+          axes = FALSE)
+  legend(x = 9, 
+         y = 0.21, 
+         legend = legend, 
+         pch = 22, 
+         bty ="n",
+         pt.bg = col, 
+         cex = 1)
+  if(yaxes) axis(side = 2,
+                 las = 2, 
+                 lwd = 1, 
+                 mgp = c(1, 0.75, 0), 
+                 cex.axis = 1)
+  if(xaxes) axis(side = 1, 
+                 las = 1, 
+                 lwd = 1, 
+                 at = at,
+                 labels = labels, 
+                 mgp = c(2, 1, 0), 
+                 cex.axis = 1)
+  box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+  title(ylab = ylab, 
+        cex.lab = 1,
+        line = 2.5)
+  title(xlab = xlab, 
+        cex.lab = 1,
+        line = 2.5)
+}
+
+# for the scatter plot
+plotit <- function(x, y, 
+                   asp = 1,
+                   abline = c(m, b, r),
+                   tex_x = 0.10,
+                   tex_y = 0.05,
+                   xaxes = TRUE, 
+                   yaxes = TRUE,
+                   ylim = c(min(y, na.rm = TRUE), 
+                            max(y, na.rm = TRUE)),
+                   xlim = c(min(x, na.rm = TRUE), 
+                            max(x, na.rm = TRUE)),
+                   sub = "Car Milage Data",
+                   xlab = "", 
+                   main = "",
+                   pch = 19,
+                   ylab = "Miles Per Gallon",
+                   cex.main = 1.5,
+                   cex.lab = 1.5,
+                   mar = c(5, 5, 5, 3)) {
+  
+  # This is for a linear regression
+  xm <- seq(xlim[1]-xlim[1]*2, xlim[2]+xlim[2], length = 100)
+  ym <- xm * abline[1] + abline[2]
+  
+  par(mar = mar)
+  #plot.new()
+  plot(1,
+       asp = asp,
+       ylim = ylim,
+       xlim = xlim,
+       main = main,
+       xlab = "",
+       ylab = "",
+       axes = FALSE)
+  #text(0.19, 0.02, pos = 1,
+  #     labels = paste('r =', as.character(abline[3]), sep = " "))
+  text(tex_x, tex_y, pos = 1,
+       labels = paste('y =', 
+                      as.character(abline[1]), "* x",
+                      "+",
+                      as.character(abline[2]), 
+                      sep = " "))
+  grid(nx = NULL, # X-axis divided in two sections
+       ny = NULL, # Y-axis divided in three sections
+       lty = 2, 
+       col = colvect(c("gray69"), alpha = 0.6), 
+       lwd = 0.75)
+  lines(xm, ym, lwd = 1,  col = "grey12")
+  points(x, y, 
+         pch = pch, 
+         col = colvect(c("gray12"), alpha = 0.8))
+  if(yaxes) axis(side = 2,
+                 las = 2, 
+                 lwd = 1, 
+                 mgp = c(1, 0.75, 0), 
+                 cex.axis = 1)
+  if(xaxes) axis(side = 1, 
+                 las = 1, 
+                 lwd = 1, 
+                 mgp = c(2, 1, 0), 
+                 cex.axis = 1)
+  box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+  title(ylab = ylab, 
+        cex.lab = 1,
+        line = 2.5)
+  title(xlab = xlab, 
+        cex.lab = 1,
+        line = 2.5)
+}
+
+# ------------------------------------------------------------------------------
 
 lons = c(-159, -157)
 #lons = c(-158.05, -157.95)
@@ -142,6 +272,7 @@ hplc$ID = as.factor("hplc")
 
 hplc = hplc[, c("chl", "month", "ID", "time")]
 sat = sat[, c("chl", "month", "ID", "time")]
+
 # ------------------------------------------------------------------------------
 # Fixin date times
 # both need to be true and I'm gutch
@@ -258,26 +389,56 @@ boxit(x2 = box_df$month,
       mar = c(5, 5, 3, 3))
 
 # ------------------------------------------------------------------------------
+# setEPS()
+# postscript(paste("figures\\hplc_chlsat_", dt, ".peps", sep = ""))
+
+
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\hplc_chlsat_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 8, # The width of the plot in inches
+    height = 11,
+    pointsize = 12) # The height of the plot in inches
+
+# Boxplot
+layout( matrix(c(1,
+                 2),
+               ncol = 1,
+               nrow = 2, 
+               byrow = TRUE),
+        heights = c(1.85, 1))
+
 # i do not know
 n = length(y) - sum(is.na(y))
 plotit(x = x, y = y, abline = c(m, b, r2),
-       tex_x = 0.2,
+       tex_x = 0.13,
        tex_y = 0.2,
        pch = 4,
-       xlab = "HPLC Bottle Samples [mg/L]",
-       ylab = "GlobColor Daily GSM CHL1 L3 [mg/m^3]",
-       sub = "a)",
+       xlab = expression(HPLC ~ Bottle ~ Samples ~ (mg ~ L^{-1})),
+       ylab = expression(GlobColor ~ Daily ~ GSM ~ CHL1 ~ L3 ~ (mg ~ m^{-3})),
+       sub = "",
        ylim = c(0.02, 0.25),
        xlim = c(0.02, 0.25),
-       line = -1.2,
-       adj = 0.05,
-       mar = c(5, 5, 5, 5))
+       mar = c(4, 4, 2, 2))
 #title("HPLC to CHLsat Comparison and CHL Seasonality", line = 1, adj = 0, cex.main = 1.5)
-text(0.2, 0.18, labels = paste("n =", as.character(n), sep = " "))
+text(0.13, 0.17, labels = paste("n =", as.character(n), sep = " "))
+
+# plotting the box by itself
+boxit(x2 = box_df$month,
+      x1 = box_df$ID,
+      col = colvect(c("ivory3", "grey12"), alpha = c(0.5,0.9)),
+      add = FALSE,
+      y = box_df$chl,
+      ylim = c(0.025, 0.22),
+      legend = c("HPLC", "Satelite"),
+      data = box_df,
+      labels = as.character(1:12),
+      at = seq(from = 1, to = 24, by = 2) + 0.5,
+      sub = "",
+      xlab = expression(Month ~ of ~ year),
+      ylab = expression(Mean ~ CHL ~ (mg ~ m^{-3})),
+      mar = c(4, 4, 0, 2))
+
+dev.off()
 
 
-
-
-
-
-
+           

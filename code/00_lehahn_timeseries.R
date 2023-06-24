@@ -601,7 +601,8 @@ jamie_theme(x = x,
             xaxes = TRUE,
             yaxes = TRUE,
             xlab = "Month Day",
-            ylab = expression(Chlorophyll ~ (mg ~ m^{-3})))
+            ylab = expression(Chlorophyll ~ (mg ~ m^{-3}))
+            )
 points(x, y,  pch = 20, cex = 1.25)
 # box(which = "plot",
 #     lty = "solid",

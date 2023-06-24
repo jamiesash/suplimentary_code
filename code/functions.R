@@ -1519,9 +1519,10 @@ plotit <- function(x, y,
                       sep = " "))
   grid(nx = NULL, # X-axis divided in two sections
        ny = NULL, # Y-axis divided in three sections
-       lty = 2, col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
+       lty = 2, col = colvect(c("gray69"), alpha = 0.6), 
+       lwd = 0.75)
+  lines(xm, ym, lwd = 1,  col = "grey12")
   points(x, y, pch = pch)
-  lines(xm, ym, lwd = 2,  col = "grey44")
   if(yaxes) axis(side = 2,
                  las = 2, 
                  lwd = 2, 
@@ -1532,7 +1533,7 @@ plotit <- function(x, y,
                  lwd = 2, 
                  mgp = c(2, 1, 0), 
                  cex.axis = 1.5)
-  box(which = "plot", lty = "solid", lwd = 3, col = "grey25")
+  box(which = "plot", lty = "solid", lwd = 2, col = "grey12")
   title(main = list(sub, cex = cex.main),
         line= line,
         adj = adj)

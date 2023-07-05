@@ -25,208 +25,198 @@ kbl(tbl,
 
 # ------------------------------------------------------------------------------
 # Big Bloom Magnitudes
-
-png(filename = paste("figures\\bloom_magnitudes_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
-
 tbl = sumtbl
 tbl[y == 2010, ]$mag = 0.142
-x = tbl$mag
-y = year(tbl$sdate)
+
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\bloom_magnitude_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
 
 main = ""
-ylab = TeX(r'(CHL $[mg/mg^3]$)')
-xlab = "Bloom year"
+# ylab = TeX(r'(CHL $[mg/mg^3]$)')
+ylab = expression(Bloom ~ Magnitude ~ CHL ~ (mg ~ m^{-3}))
+xlab = "Year"
 # this changes the linewidth outsidet he plot
-opar = par(lwd = 2)
 
-par(mar = c(5,5,3,3))
-barplot(x, 
-        names.arg = y, 
+opar = par(lwd = 1)
+par(mar = c(5,5,1,2))
+barplot(tbl$mag, 
+        names.arg = year(tbl$sdate), 
         main = "",
         ylab = "", 
         xlab = "",
-        ylim = c(0, max(x) + max(x)*0.05),
+        col = "grey30",
+        ylim = c(0, max(tbl$mag) + max(tbl$mag)*0.05),
         axes = FALSE,
-        cex.names = 1.25,
-        col = "grey80",
-        #las=2,
-        cex.axis=0.2,
-        bourder = colvect("grey22", alpha = 0.9)
-        #density = 1
-)
-box(which = "plot", lty = "solid", lwd = 3, col = colvect("grey22", alpha = 0.9))
-grid(nx = 6, # X-axis divided in two sections
-     ny = 6, # Y-axis divided in three sections
+        cex.names = 1,
+        las = 1,
+        cex.axis = 1)
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+grid(nx = NA, # X-axis divided in two sections
+     ny = NULL,
      lty = 2, 
      col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
 axis(side = 2,
      las  = 2,
-     lwd  = 2,
-     mgp  = c(1, 0.75, 0),
-     cex.axis = 1.25,
-     col = colvect("grey22", alpha = 0.9))
+     lwd  = 1,
+     cex.axis = 1,
+     col = "black")
 title(main = main,
       cex.lab = 2,
       line= 0.75,
       adj = 0)
-title(ylab = ylab, cex.lab = 1.5, line = 2.75)
-title(xlab = xlab, cex.lab = 1.5, line = 2.5)
+title(ylab = ylab, cex.lab = 1, line = 2.5)
+title(xlab = xlab, cex.lab = 1, line = 2.5)
 dev.off()
+
 # ------------------------------------------------------------------------------
 # Big Bloom Areas
-
-png(filename = paste("figures\\bloom_areas_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
-
 tbl = sumtbl
-#idx = tbl$area > 550000
-#tbl = tbl[idx,]
-y = year(tbl$sdate)
 tbl[y == 2022, ]$area = 682983.1
-x = tbl$area/100000
-y = year(tbl$sdate)
-main = ""
-ylab = TeX(r'(Area $[km \times 10^5]$)')
-xlab = "Bloom year"
+
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\bloom_area_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
 
 # this changes the linewidth outsidet he plot
-par(mar = c(5,5,3,3))
-opar = par(lwd = 2)
-barplot(x, 
+par(mar = c(5,5,1,2))
+opar = par(lwd = 1) #2
+barplot(tbl$area/100000, 
         axes = FALSE,
-        names.arg = y, 
+        names.arg = year(tbl$sdate), 
         main = "",
         ylab = "", 
+        col = "grey30",
         xlab = "",
-        ylim = c(0, max(x) + max(x)*0.05))
-box(which = "plot", lty = "solid", lwd = 3, col = colvect("grey22", alpha = 0.9))
-grid(nx = 6, # X-axis divided in two sections
-     ny = 6, # Y-axis divided in three sections
+        ylim = c(0, max(tbl$area/100000) + max(tbl$area/100000)*0.05))
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+grid(nx = NA, # X-axis divided in two sections
+     ny = NULL, # Y-axis divided in three sections
      lty = 2, 
      col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
 axis(side = 2,
      las  = 2, 
-     lwd  = 2, 
+     lwd  = 1, 
      mgp  = c(1, 0.75, 0), 
-     cex.axis = 1.25,
-     col = colvect("grey22", alpha = 0.9))
-title(main = main,
-      cex.lab = 2,
-      line= 0.75,
-      adj = 0)
-title(ylab = ylab, cex.lab = 1.5, line = 2.75)
-title(xlab = xlab, cex.lab = 1.5, line = 2.5)
+     cex.axis = 1,
+     col = "black")
+# title(main = main,
+#       cex.lab = 1,
+#       line= 0.75,
+#       adj = 0)
+title(ylab = expression(Bloom ~ Area ~ (km * 10^{5})), 
+      cex.lab = 1, 
+      line = 2.5)
+title(xlab = "Year", 
+      cex.lab = 1, 
+      line = 2.5)
 dev.off()
 
 # ------------------------------------------------------------------------------
-# Bloom Duration
 tbl = sumtbl
-#idx = tbl$area > 550000
-#tbl = tbl[idx,]
+tbl[y == 2010, ]$mag = 0.142
+tbl[y == 2022, ]$area = 682983.1
 
-png(filename = paste("figures\\bloom_durations_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\bloom_magnitude_area_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 8, # The width of the plot in inches
+    height = 8,
+    pointsize = 10) # The height of the plot in inches
 
-start = yday(tbl$sdate)
-end   = yday(tbl$edate)
-# end[end < 100] = 365
-# end[length(end)] = end[length(end)] + 60
+layout( matrix(c(1,
+                 2),
+               ncol = 1,
+               nrow = 2, 
+               byrow = TRUE),
+        heights = c(1, 1))
 
-durations = data.frame(id = as.character(year(tbl$sdate)), start, end)
-durations$middle = apply(durations[, c("start", "end")], 1, FUN = mean, na.rm = TRUE)
-durations$year = year(tbl$sdate)
+opar = par(lwd = 1)
+par(mar = c(3,5,3,2))
+barplot(tbl$mag, 
+        names.arg = year(tbl$sdate), 
+        main = "",
+        ylab = "", 
+        xlab = "",
+        ylim = c(0, max(tbl$mag) + max(tbl$mag)*0.05),
+        axes = FALSE,
+        cex.names = 1,
+        col = "grey30",
+        las = 1,
+        cex.axis = 1
+        #density = 1
+)
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+grid(nx = NA, # X-axis divided in two sections
+     ny = NULL,
+     lty = 2, 
+     col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
+axis(side = 2,
+     las  = 2,
+     lwd  = 1,
+     cex.axis = 1,
+     col = "black")
+# title(main = main,
+#       cex.lab = 2,
+#       line= 0.75,
+#       adj = 0)
+title(ylab = expression(Bloom ~ Magnitude ~ CHL ~ (mg ~ m^{-3})), 
+      cex.lab = 1, 
+      line = 2.5)
+#title(xlab = "Year", cex.lab = 1, line = 2.5)
 
-# seperating years with two blooms to plot correctly
-idx_dup   = duplicated(durations$year)
-twobloom  = durations[idx_dup,]
-durations = durations[!idx_dup,]
-
-idx_dup    = duplicated(twobloom$year)
-threebloom = twobloom[idx_dup,]
-twobloom   = twobloom[!idx_dup,]
-
-ggplot(durations) +
-  geom_boxplot(
-    fill = "grey100",
-    colour = colvect("grey22", alpha = 0.9),
-    size = 0.75,
-    stat = "identity",
-    aes(x = id, 
-        lower  = start, 
-        middle = middle, 
-        upper  = end, 
-        ymin   = start, 
-        ymax   = end
-    )) +
-  geom_boxplot(data = twobloom,
-               fill = "grey100",
-               colour = colvect("grey22", alpha = 0.9),
-               size = 0.75,
-               stat = "identity",
-               aes(x = id, 
-                   lower  = start, 
-                   middle = middle, 
-                   upper  = end, 
-                   ymin   = start, 
-                   ymax   = end
-               )) +
-  geom_boxplot(data = threebloom,
-               fill = "grey100",
-               colour = colvect("grey22", alpha = 0.9),
-               size = 0.75,
-               stat = "identity",
-               aes(x = id, 
-                   lower  = start, 
-                   middle = middle, 
-                   upper  = end, 
-                   ymin   = start, 
-                   ymax   = end
-               )) +
-  xlab("Bloom year") +
-  ylab("Day of year") +
-  labs(title = "") + 
-  theme_bw() + 
-  theme(
-    panel.border = element_rect(colour = colvect("grey22", alpha = 0.9), 
-                                fill = NA, 
-                                size = 2),
-    axis.title.x = element_text(size = rel(1.25)),
-    axis.title.y = element_text(size = rel(1.25)),
-    axis.text.x = element_text(size = rel(1.25)),
-    axis.text.y = element_text(size = rel(1.25)),
-    plot.title = element_text(size  = rel(1.25))
-  ) +
-  coord_flip()
+# this changes the linewidth outsidet he plot
+par(mar = c(5, 5, 0.5, 2))
+opar = par(lwd = 1) #2
+barplot(tbl$area/100000, 
+        axes = FALSE,
+        names.arg = year(tbl$sdate), 
+        main = "",
+        ylab = "", 
+        xlab = "",
+        col =  "grey30",
+        ylim = c(0, max(tbl$area/100000) + max(tbl$area/100000)*0.05))
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+grid(nx = NA, # X-axis divided in two sections
+     ny = NULL, # Y-axis divided in three sections
+     lty = 2, 
+     col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
+axis(side = 2,
+     las  = 2, 
+     lwd  = 1, 
+     mgp  = c(1, 0.75, 0), 
+     cex.axis = 1,
+     col = "black")
+# title(main = main,
+#       cex.lab = 1,
+#       line= 0.75,
+#       adj = 0)
+title(ylab = expression(Bloom ~ Area ~ (km * 10^{5})), 
+      cex.lab = 1, 
+      line = 2.5)
+title(xlab = "Year", 
+      cex.lab = 1, 
+      line = 2.5)
 dev.off()
-# ------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
 # Bloom Centers
-
-png(filename = paste("figures\\bloom_centers_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\bloom_centers2_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
 
 tbl = sumtbl
-e = extent(-173, -125, 11, 46)
+e = extent(-168, -125, 13, 42)
 wdmap <- getMap(resolution = "high")
 temp = tbl
-idx = tbl$lon > -165
-tbl = tbl[idx,]
+#idx = tbl$lon > -165
+#tbl = tbl[idx,]
 #idx = !year(tbl$sdate) == 2015
 #tbl = tbl[idx,]
 
@@ -239,7 +229,10 @@ tbl$y = as.character(year(tbl$sdate))
 
 idx = order(tbl$area, decreasing = TRUE)
 txt = tbl[idx,]
-txt = txt[1:3,]
+txt = txt[1,]
+
+idx = year(tbl$sdate) == 2018
+tbl = tbl[!idx,]
 
 jamie_theme(e[1:2], e[3:4],
             main = "", 
@@ -249,16 +242,23 @@ jamie_theme(e[1:2], e[3:4],
             xaxes = TRUE,
             yaxes = TRUE,
             mar = c(5,5,2,3)
-            #asp = 1.08
 )
-points(tbl$lon, tbl$lat, pch = 19)
+points(tbl$lon, tbl$lat, pch = 4)
 for(i in 1:nrow(tbl)) draw.circle(tbl$lon[i], 
                                   tbl$lat[i], 
                                   tbl$rad[i],
-                                  border = colvect("grey22", alpha = 0.6),
-                                  lwd = 2,
+                                  border = colvect("black", alpha = 0.9),
+                                  lwd = 1,
                                   nv  = 500,
                                   lty = 2)
+points(txt$lon, txt$lat, pch = 10, col = "firebrick")
+draw.circle(txt$lon[1], 
+            txt$lat[1], 
+            txt$rad[1],
+            border = "firebrick",
+            lwd = 1,
+            nv  = 500,
+            lty = 2)
 plot(wdmap, 
      xlim = e[1:2], 
      ylim = e[3:4], 
@@ -268,14 +268,97 @@ plot(wdmap,
      col = "black", 
      #wrap = c(-180, 180), 
      add = TRUE)
-text(txt$lon, txt$lat, label = txt$y, adj = 1.2)
-box(which = "plot", lty = "solid", lwd = 3, col = colvect("grey22", alpha = 0.9))
-#legend(-140, 22, legend = "centers", pch = 20)
+#text(txt$lon, txt$lat, label = txt$y, adj = 1.2)
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+legend(-138, 21, 
+       legend = c("bloom centers", "2018 bloom"), 
+       col = c(colvect("black", alpha = 0.9), "firebrick"),
+       pch = c(4, 10))
 dev.off()
 
+# ------------------------------------------------------------------------------
+# Bloom Duration
+tbl = sumtbl
 
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\bloom_duration_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 6,
+    pointsize = 12) # The height of the plot in inches
 
+start = yday(tbl$sdate)
+end   = yday(tbl$edate)
+# end[end < 100] = 365
+# end[length(end)] = end[length(end)] + 60
 
+durations = data.frame(id = as.character(year(tbl$sdate)), start, end)
+durations$middle = apply(durations[, c("start", "end")], 1, FUN = mean, na.rm = TRUE)
+durations$year = year(tbl$sdate)
+
+# seperating years with two blooms 
+# idx_dup   = duplicated(durations$year)
+# twobloom  = durations[idx_dup,]
+# durations = durations[!idx_dup,]
+# 
+# # doing it again for three bloom years
+# idx_dup    = duplicated(twobloom$year)
+# threebloom = twobloom[idx_dup,]
+# twobloom   = twobloom[!idx_dup,]
+
+ggplot(durations) +
+  geom_boxplot(
+    fill = "grey30",
+    colour = "black",
+    stat = "identity",
+    aes(x = id, 
+        lower  = start, 
+        middle = start, 
+        upper  = end, 
+        ymin   = start, 
+        ymax   = end
+    )) +
+  # geom_boxplot(data = twobloom,
+  #              fill = "grey100",
+  #              colour = colvect("grey22", alpha = 0.9),
+  #              size = 0.75,
+  #              stat = "identity",
+  #              aes(x = id, 
+  #                  lower  = start, 
+  #                  middle = middle, 
+  #                  upper  = end, 
+  #                  ymin   = start, 
+  #                  ymax   = end
+  #              )) +
+  # geom_boxplot(data = threebloom,
+  #              fill = "grey100",
+  #              colour = colvect("grey22", alpha = 0.9),
+  #              size = 0.75,
+  #              stat = "identity",
+  #              aes(x = id, 
+  #                  lower  = start, 
+  #                  #middle = middle, 
+  #                  upper  = end, 
+  #                  ymin   = start, 
+  #                  ymax   = end
+  #              )) +
+  xlab("Bloom year") +
+  ylab("Day of year") +
+  labs(title = "") + 
+  theme_bw() + 
+  theme(
+    panel.border = element_rect(colour = "black", 
+                                fill = NA,  
+                                size = 1),
+    axis.title.x = element_text(size = rel(1)),
+    axis.title.y = element_text(size = rel(1)),
+    axis.text.x = element_text(size = rel(1)),
+    axis.text.y = element_text(size = rel(1)),
+    plot.title = element_text(size  = rel(1))
+  ) +
+  coord_flip()
+dev.off()
+
+# ------------------------------------------------------------------------------
 
 
 

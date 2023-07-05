@@ -2030,7 +2030,7 @@ jamie_theme <- function(x,
        #asp = asp,
        )
   if(gridd == TRUE) {
-    grid(nx = NULL, # X-axis divided in two sections
+    grid(nx = NA, # X-axis divided in two sections
          ny = NULL, # Y-axis divided in three sections
          lty = 2, 
          col = colvect(c("gray69"), alpha = 0.5), lwd = 1)

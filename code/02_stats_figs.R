@@ -206,13 +206,13 @@ dev.off()
 #-------------------------------------------------------------------------------
 # Bloom Centers
 dt = gsub("-", "", as.character(Sys.Date()))
-pdf(paste("figures\\bloom_centers2_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
-    width = 6, # The width of the plot in inches
-    height = 4,
+pdf(paste("figures\\bloom_centers_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 8, # The width of the plot in inches
+    height = 5.5,
     pointsize = 10) # The height of the plot in inches
 
 tbl = sumtbl
-e = extent(-168, -125, 13, 42)
+e = extent(-168, -125, 15, 42)
 wdmap <- getMap(resolution = "high")
 temp = tbl
 #idx = tbl$lon > -165
@@ -234,15 +234,19 @@ txt = txt[1,]
 idx = year(tbl$sdate) == 2018
 tbl = tbl[!idx,]
 
+x = e[1:2]
+at = round(seq(range(x)[1]+2, range(x)[2]-2, length = 5), 1)
+
 jamie_theme(e[1:2], e[3:4],
             main = "", 
-            ylab = "Latitude", 
-            xlab = "Longitude",
+            ylab = expression(paste("Latitude (",degree,"N)")), 
+            xlab = expression(paste("Longitude (",degree,"W)")),
             dt = FALSE,
             xaxes = TRUE,
             yaxes = TRUE,
             mar = c(5,5,2,3)
 )
+axis(1, at = at, tck = 1, lty = 2, col = "grey", labels = NA)
 points(tbl$lon, tbl$lat, pch = 4)
 for(i in 1:nrow(tbl)) draw.circle(tbl$lon[i], 
                                   tbl$lat[i], 

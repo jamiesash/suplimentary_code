@@ -372,6 +372,12 @@ boxit(x2 = box_df$month,
 dev.off()
 
 # ------------------------------------------------------------------------------
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\hplc_chlsat_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
+
 # plotting the box by itself
 boxit(x2 = box_df$month,
       x1 = box_df$ID,

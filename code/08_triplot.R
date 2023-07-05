@@ -3,19 +3,18 @@
 # load xyz table ---------------------------------------------------------------
 source("code\\functions.R")
 source("code\\libraries.R")
+library(Thermimage)
 rasterOptions(maxmemory = 123e+10)
 
 xyz = read.csv("data\\collated\\xyz_2010_2021_20230218.csv")
 
-head(xyz)
 gc()
 
 # ------------------------------------------------------------------------------
-# plotting the data
+# functions to prepare data to be plotted 
 scale <- function(x, to, from){   
   (x - min(x))/(max(x)-min(x)) * (to - from) + from
 }
-
 
 tsect <- function(x, y, z, xreach = 1, yreach = 1, xlen = 120, ylen = 40){
   #make a max min vector of sla and fsle
@@ -57,8 +56,7 @@ tsect <- function(x, y, z, xreach = 1, yreach = 1, xlen = 120, ylen = 40){
 }
 
 # ------------------------------------------------------------------------------
-# making a matrix fr the contor plot. real data
-library(Thermimage)
+# making a matrix for the contour plot real data
 
 temp = subset(xyz, !is.na(chla))
 
@@ -89,17 +87,16 @@ zmat <- apply(tmat[[1]], 2, rev)
 zmat = t(zmat)
 
 # ------------------------------------------------------------------------------
-# plotting teh data as a contour plot
+# plotting the data as a contour plot
 col <- colorRampPalette(c("purple3",  "blue", "cyan", "white", "yellow", "orangered", "red3"))(21)
 
 zlim = c(median(lil$chla)-mad(lil$chla)*2, median(lil$chla) + mad(lil$chla)*2)
 
-png(filename= paste("triplot", Sys.Date(), ".png", sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\triplot_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
 
 drawPalette(zlim = zlim,
             col  = col, 
@@ -115,10 +112,70 @@ image(xvect, yvect, zmat,
       xlab = "SLA",
       ylab = "FSLE",
       col = col)
-box(which = "plot", lty = "solid", lwd = 3, col = "grey25")
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
 
 dev.off()
 
+# ------------------------------------------------------------------------------
+# as a veroni diagram
+temp = subset(xyz, !is.na(chla))
+
+# increase after test
+idx = sample(1:nrow(temp), 1000)
+lil = temp[idx,]
+lil$fsle = lil$fsle * -1
+
+# if k does not exist ill need to find it
+color = c("white","grey32", "firebrick", "navy")
+color = factor(lil$k, labels = color)
+color = as.character(color)
+
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\veroni_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
+
+plot(0, 
+     0.2, 
+     ylim = c(0, 1), 
+     xlim = c(-0.25, 0.25), 
+     col = "white", 
+     pch = 18,
+     cex = 0.4,
+     xlab = "",
+     ylab = "",
+     axes = FALSE)
+grid(nx = NULL, 
+     ny = NULL,
+     lty = 2,      # Grid line type
+     col = "grey69", # Grid line color
+     lwd = 1)
+points(lil$sla, 
+       lil$fsle,
+       col = color,
+       pch = 18,
+       cex = 0.4)
+title(xlab = "SLA [m]", line = 2.5, cex.lab = 1)
+title(ylab = "FSLE [day]", line = 2.5, cex.lab = 1)
+axis(side = 2, 
+     las = 3, 
+     lwd = 1, 
+     mgp = c(1, 0.75, 0), 
+     cex.axis = 1)
+axis(side = 1, 
+     las = 1, 
+     lwd = 1,
+     mgp = c(2, 1, 0),    
+     cex.axis = 1)
+# Grid line width
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+legend(x = 0.15, y = 0.9, 
+       legend = c("Mix", "Front","Cyclon", "Anti-cyclon"),
+       pch = 22,
+       pt.bg = c("white","grey32", "navy", "firebrick"))
+
+dev.off()
 
 
 

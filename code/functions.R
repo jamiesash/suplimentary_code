@@ -2035,33 +2035,33 @@ jamie_theme <- function(x,
          lty = 2, 
          col = colvect(c("gray69"), alpha = 0.5), lwd = 1)
     }
-  box(which = "plot", 
-      lty = "solid", 
-      lwd = 3, 
-      col = colvect("grey22", alpha = 0.9))
-  windowsFonts(script=windowsFont("Script MT Bold"))
+  #windowsFonts(script=windowsFont("Script MT Bold"))
   if(xaxes) {
     axis(side = 1,
     at = at,
     labels = labels,
     las = 1, 
-    lwd = 2, 
+    lwd = 1, 
     mgp = c(2, 1, 0), 
-    cex.axis = 1.25,
-    col = colvect("grey22", alpha = 0.9))}
+    cex.axis = 1,
+    col = "black")}
   if(yaxes){
     axis(side = 2,
     las  = 2, 
-    lwd  = 2, 
+    lwd  = 1, 
     mgp  = c(1, 0.75, 0), 
-    cex.axis = 1.25,
-    col = colvect("grey22", alpha = 0.9))}
+    cex.axis = 1,
+    col = "black")}
+  box(which = "plot", 
+      lty = "solid", 
+      lwd = 1.5, 
+      col = "black")
   title(main = main,
-        cex.main = 1.75,
+        cex.main = 1,
         line = line,
         adj = adj)
-  title(ylab = ylab, cex.lab = 1.5, line = 3)
-  title(xlab = xlab, cex.lab = 1.5, line = 2.5)
+  title(ylab = ylab, cex.lab = 1, line = 2.5)
+  title(xlab = xlab, cex.lab = 1, line = 2.5)
 }
 
 # anomalize --------------------------------------------------------------------

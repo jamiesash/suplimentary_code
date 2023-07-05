@@ -88,8 +88,7 @@ df = rbind(cyc, ant, sub)
 rm(cyc, ant, sub)
 
 # ------------------------------------------------------------------------------
-# Plot function for loop animation
-wdmap <- getMap(resolution = "high")
+# Plot function for loop animation ,not looping here.
 my_map = function(day, wdmap, col_map, 
                   main = "",
                   e = c(-170, -130, 18, 36)){
@@ -99,12 +98,12 @@ my_map = function(day, wdmap, col_map,
   sub = day[[3]]
   rm(day)
   
-  lay = matrix(c(1, 2),
-               nrow = 1,
-               byrow = TRUE)
+  #lay = matrix(c(1, 2),
+  #             nrow = 1,
+  #             byrow = TRUE)
   
-  nf = graphics::layout(lay,
-                        widths = c(14, 1))
+  #nf = graphics::layout(lay,
+  #                      widths = c(14, 1)) # this eh
   
   par(mar = c(4,4,2,1))
   
@@ -119,24 +118,24 @@ my_map = function(day, wdmap, col_map,
   # plot fronts
   points(x = cyc$lon, y = cyc$lat, col = cyc$colors, pch = 19, cex = 1)
   # plot fronts
-  points(x = sub$lon, y = sub$lat, col = sub$colors, pch = 20, cex = 0.55)
+  points(x = sub$lon, y = sub$lat, col = sub$colors, pch = 20, cex = 0.5)
   
-  axis(side = 2, las  = 2, lwd  = 2, mgp  = c(1, 0.75, 0), cex.axis = 1.25)
+  axis(side = 2, las  = 2, lwd  = 1, mgp  = c(1, 0.75, 0), cex.axis = 1)
   
   axis(side = 1,
        at = c(-170, -165, -160, -155, -150, -145, -140, -135, -130, -125),
        las = 1, 
-       lwd = 2, 
+       lwd = 1, 
        mgp = c(2, 1, 0), 
-       cex.axis = 1.25,
-       col = colvect("grey12", alpha = 0.9),
+       cex.axis = 1,
+       col = "black",
   )
   
-  title(main = main, cex.main = 1.75, line = 0.25, adj = 0)
+  title(main = main, cex.main = 1, line = 0.25, adj = 0)
   
-  title(ylab = "Latitude", cex.lab = 1.5, line = 2.5)
+  title(ylab = "Latitude", cex.lab = 1, line = 2.5)
   
-  title(xlab = "Longitude", cex.lab = 1.5, line = 2.5)
+  title(xlab = "Longitude", cex.lab = 1, line = 2.5)
   
   plot(wdmap,
        xlim = e[1:2],
@@ -148,20 +147,20 @@ my_map = function(day, wdmap, col_map,
        #wrap = c(-180, 180),
        add = TRUE)
   
-  box(which = "plot", lty = "solid", lwd = 3, col = colvect("black", alpha = 0.9))
+  box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
 }
 
 # ------------------------------------------------------------------------------
+# plotting just one day
 day = unique(df$time)
 day = subset(df, time == day[1])
-wdmap <- getMap(resolution = "high")
+wdmap = getMap(resolution = "high")
 
-png(filename = paste("figures\\eddies_fronts_", Sys.Date(), ".png",sep = ""),
-    width = 3.5,
-    height = 6,
-    units = "in",
-    res = 300,
-    pointsize = 10)
+dt = gsub("-", "", as.character(Sys.Date()))
+pdf(paste("figures\\eddies_fronts_", dt, ".pdf", sep = ""),   # The directory you want to save the file in
+    width = 6, # The width of the plot in inches
+    height = 4,
+    pointsize = 10) # The height of the plot in inches
 
 my_map(day, wdmap, main = "Eddies and fronts: 2018-06-01",
        e = c(-165, -140, 23, 32.5))

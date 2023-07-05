@@ -143,19 +143,18 @@ plotit <- function(x, y,
 
 # ------------------------------------------------------------------------------
 
-lons = c(-159, -157)
+lons = c(-158, -157)
 #lons = c(-158.05, -157.95)
-lats = c( 21,   23)
+lats = c( 21.5,   22.5)
 e = extent(lons, lats)
 
 # Set variables
 lat_varid = "lat"
 lon_varid = "lon"
 sdate = as.Date("1997-06-01")
-edate = as.Date("2021-11-01")
+edate = as.Date("2022-12-31")
 var = "CHL"
 url = "https://jash:5.Pellegrino@my.cmems-du.eu/thredds/dodsC/cmems_obs-oc_glo_bgc-plankton_my_l3-multi-4km_P1D?"
-
 origin = "1900-01-01"
 
 data = nc_open(url, verbose = FALSE, write = FALSE)

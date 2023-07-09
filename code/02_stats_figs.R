@@ -117,7 +117,9 @@ title(xlab = "Year",
 dev.off()
 
 # ------------------------------------------------------------------------------
+
 tbl = sumtbl
+y = year(tbl$sdate)
 tbl[y == 2010, ]$mag = 0.142
 tbl[y == 2022, ]$area = 682983.1
 
@@ -149,7 +151,6 @@ barplot(tbl$mag,
         cex.axis = 1
         #density = 1
 )
-box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
 grid(nx = NA, # X-axis divided in two sections
      ny = NULL,
      lty = 2, 
@@ -159,14 +160,10 @@ axis(side = 2,
      lwd  = 1,
      cex.axis = 1,
      col = "black")
-# title(main = main,
-#       cex.lab = 2,
-#       line= 0.75,
-#       adj = 0)
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
 title(ylab = expression(Bloom ~ Magnitude ~ CHL ~ (mg ~ m^{-3})), 
       cex.lab = 1, 
       line = 2.5)
-#title(xlab = "Year", cex.lab = 1, line = 2.5)
 
 # this changes the linewidth outsidet he plot
 par(mar = c(5, 5, 0.5, 2))
@@ -179,7 +176,6 @@ barplot(tbl$area/100000,
         xlab = "",
         col =  "grey30",
         ylim = c(0, max(tbl$area/100000) + max(tbl$area/100000)*0.05))
-box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
 grid(nx = NA, # X-axis divided in two sections
      ny = NULL, # Y-axis divided in three sections
      lty = 2, 
@@ -190,16 +186,14 @@ axis(side = 2,
      mgp  = c(1, 0.75, 0), 
      cex.axis = 1,
      col = "black")
-# title(main = main,
-#       cex.lab = 1,
-#       line= 0.75,
-#       adj = 0)
-title(ylab = expression(Bloom ~ Area ~ (km * 10^{5})), 
+title(ylab = expression(Bloom ~ Area ~ (km ~ x ~10^{5})), 
       cex.lab = 1, 
       line = 2.5)
 title(xlab = "Year", 
       cex.lab = 1, 
       line = 2.5)
+box(which = "plot", lty = "solid", lwd = 1.5, col = "black")
+
 dev.off()
 
 
